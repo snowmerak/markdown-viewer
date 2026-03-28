@@ -1,13 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { BookOpen, Monitor, Upload, FileText, ArrowLeft, FolderOpen, File as FileIcon } from 'lucide-react';
+import { BookOpen, Monitor, Upload, FileText, File as FileIcon } from 'lucide-react';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import './index.css';
-
-interface FileInfo {
-  name: string;
-  path: string;
-}
 
 function App() {
   const [markdown, setMarkdown] = useState<string>('');
@@ -17,10 +12,6 @@ function App() {
   const [totalScreens, setTotalScreens] = useState<number>(1);
   const viewerRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  // Folder Browsing State
-  const [currentFolder, setCurrentFolder] = useState<string | null>(null);
-  const [folderFiles, setFolderFiles] = useState<FileInfo[]>([]);
 
   // Parse Markdown to sanitized HTML
   const getHtml = () => {
@@ -87,7 +78,7 @@ function App() {
     }
   };
 
-  // Core Entry Point for File / Folder Selection
+  // Core Entry Point for File Selection
   const handleSystemPath = async (fileObj: File) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -99,26 +90,12 @@ function App() {
       try {
         // eslint-disable-next-line @typescript-eslint/no-require-imports
         const fs = require('fs');
-        // eslint-disable-next-line @typescript-eslint/no-require-imports
-        const nodePath = require('path');
         const stats = await fs.promises.stat(path);
 
         if (stats.isDirectory()) {
-          // Read directory
-          const files = await fs.promises.readdir(path);
-          const markdownFiles: FileInfo[] = [];
-          for (const f of files) {
-            const isMd = f.toLowerCase().endsWith('.md');
-            if (isMd) {
-               markdownFiles.push({ name: f, path: nodePath.join(path, f) });
-            }
-          }
-          setCurrentFolder(path);
-          setFolderFiles(markdownFiles);
-          setMarkdown(''); // Clear viewer if we were previously in it
+          alert("Folders are not supported. Please drop a file.");
+          return;
         } else {
-          // Read arbitrary file
-          setCurrentFolder(null); // Reset folder view if tracking one
           await readFileByPath(path);
         }
       } catch (e) {
@@ -136,7 +113,6 @@ function App() {
       setCurrentFile(file.name);
       setMarkdown(e.target?.result as string);
       setCurrentScreen(0);
-      setCurrentFolder(null);
     };
     reader.readAsText(file);
   };
@@ -148,7 +124,7 @@ function App() {
   };
 
   // 1. Landing View
-  if (!markdown && !currentFolder) {
+  if (!markdown) {
     return (
       <div 
         className="landing"
@@ -156,92 +132,33 @@ function App() {
         onDrop={onDrop}
       >
         <h1>Antigravity Reader</h1>
-        <p>Drop any file to read, or drop a folder to explore sub-documents.</p>
+        <p>Drop any file to read.</p>
         <div 
           className="drop-zone"
           style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
         >
           <Upload size={48} color="#8b949e" style={{ marginBottom: '16px' }} />
-          <span style={{ fontSize: '1.2rem', marginBottom: '32px' }}>Drag & drop any <strong style={{ color: '#58a6ff' }}>File</strong> or <strong style={{ color: '#a371f7' }}>Folder</strong></span>
+          <span style={{ fontSize: '1.2rem', marginBottom: '32px' }}>Drag & drop any <strong style={{ color: '#58a6ff' }}>File</strong></span>
           
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', width: '100%' }}>
             <label className="btn" style={{ flex: 1, justifyContent: 'center', padding: '12px 0' }}>
               <FileIcon size={18} /> Browse File
               <input type="file" style={{ display: 'none' }} onChange={(e) => { if(e.target.files?.[0]) handleSystemPath(e.target.files[0]); }} />
             </label>
-            <label className="btn" style={{ flex: 1, justifyContent: 'center', padding: '12px 0' }}>
-              <FolderOpen size={18} /> Browse Folder
-              {/* @ts-expect-error nwdirectory is specific to NW.js */}
-              <input type="file" nwdirectory="true" webkitdirectory="true" style={{ display: 'none' }} onChange={(e) => { if(e.target.files?.[0]) handleSystemPath(e.target.files[0]); }} />
-            </label>
           </div>
         </div>
       </div>
     );
   }
 
-  // 2. Folder Browsing View
-  if (!markdown && currentFolder) {
-    return (
-      <div 
-        className="folder-view"
-        style={{ padding: '40px', overflowY: 'auto', height: '100vh', width: '100vw', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={onDrop}
-      >
-        <div style={{ width: '100%', maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '32px', paddingBottom: '16px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-            <button className="btn" onClick={() => setCurrentFolder(null)}>
-              <Upload size={16} /> Home
-            </button>
-            <h2 style={{ fontSize: '1.2rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0, color: '#c9d1d9' }}>
-              <FolderOpen size={24} color="#58a6ff" />
-              {currentFolder}
-            </h2>
-          </div>
-
-          {folderFiles.length === 0 ? (
-            <div style={{ textAlign: 'center', color: '#8b949e', padding: '48px 0' }}>
-              No markdown files (*.md, *.MD) found in this folder.
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-              {folderFiles.map(file => (
-                <div 
-                  key={file.path}
-                  onClick={() => readFileByPath(file.path)}
-                  style={{ display: 'flex', alignItems: 'flex-start', padding: '16px', backgroundColor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}
-                  onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = 'rgba(88,166,255,0.1)'; e.currentTarget.style.borderColor = '#58a6ff'; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; }}
-                >
-                  <div style={{ flexShrink: 0, marginRight: '12px' }}>
-                     <FileIcon size={24} color="#a371f7" />
-                  </div>
-                  <span style={{ wordBreak: 'break-all', lineHeight: 1.2 }}>{file.name}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  // 3. Document Viewer
+  // 2. Document Viewer
   return (
     <div className="app-root" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       {/* UI Controls overlay */}
       <div className="ui-overlay">
-        {currentFolder && (
-          <button className="btn" onClick={() => setMarkdown('')}>
-            <ArrowLeft size={16} /> Folder
-          </button>
-        )}
-        {!currentFolder && (
-          <button className="btn" onClick={() => { setMarkdown(''); setCurrentFile(''); }}>
-            <FileText size={16} /> Close
-          </button>
-        )}
+        <button className="btn" onClick={() => { setMarkdown(''); setCurrentFile(''); }}>
+          <FileText size={16} /> Close
+        </button>
         <div style={{ fontSize: '0.875rem', padding: '4px 16px', background: 'rgba(0,0,0,0.4)', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.05)', margin: '0 8px', display: 'flex', alignItems: 'center' }}>
           {currentFile}
         </div>

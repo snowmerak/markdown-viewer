@@ -2,16 +2,15 @@
 A lightweight, aesthetically beautiful Markdown & Universal File Reader designed for NW.js desktop environments and Chromium browsers.
 
 ## Key Features
-- **Universal Multi-File Loading**: Simply drag and drop any `.md` file to read. Drops that are non-markdown files will automatically attempt raw parsing or inject as formatted `<pre>` text.
-- **Folder Navigation Engine**: Drag and drop an entire folder directly over the app to browse and read all included `.md` files in a visually pleasing sub-menu seamlessly via Node.js local context.
-- **Zero-Drift Pagination**: A pure CSS Multi-Column flow layout engine that mathematical segments content directly to screen widths without losing subpixels across infinite pages.
+- **Universal Multi-File Loading**: Simply drag and drop any file to read. Drops that are non-markdown files will automatically attempt raw parsing or inject as formatted `<pre>` text.
+- **Zero-Drift Pagination**: A pure CSS Multi-Column flow layout engine that mathematically segments content directly to screen widths without losing subpixels across infinite pages.
 - **Dual & Single Mode**: Use the native UI overlay controls to choose between a classic Single screen view, or a Book-style Dual screen view.
 
 ## Requirements & Local Dev
 You need Node.js and NPM to resolve packages.
 1. Run `npm install`
-2. Run `npm run dev` to boot within a standard Web browser (Folder drops fallback to standard reading, specific `.md` files recommended).
-3. **Or native run**: Run `npm run nw` to launch a fully native NW.js instance (Direct disk-access enabled, folder browsing enabled).
+2. Run `npm run dev` to boot within a standard Web browser.
+3. **Or native run**: Run `npm run nw` to launch a fully native NW.js instance (Direct disk-access enabled).
 
 ## Creating an NW.js Distribution (Packaging)
 To share this application as a standalone executable `.exe` file without needing Node.js or developers tools, follow these official NW.js steps:
