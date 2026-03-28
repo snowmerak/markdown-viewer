@@ -157,15 +157,25 @@ function App() {
       >
         <h1>Antigravity Reader</h1>
         <p>Drop any file to read, or drop a folder to explore sub-documents.</p>
-        <label className="drop-zone">
-          <Upload size={48} className="mx-auto mt-2 mb-4 text-gray-500" />
-          <span style={{ fontSize: '1.2rem' }}>Drag & drop any <strong style={{ color: '#58a6ff' }}>File</strong> or <strong style={{ color: '#a371f7' }}>Folder</strong></span>
-          <input 
-            type="file" 
-            /* Remove strict accept to allow ANY file as requested */
-            onChange={(e) => { if(e.target.files?.[0]) handleSystemPath(e.target.files[0]); }} 
-          />
-        </label>
+        <div 
+          className="drop-zone"
+          style={{ width: '100%', maxWidth: '500px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
+        >
+          <Upload size={48} color="#8b949e" style={{ marginBottom: '16px' }} />
+          <span style={{ fontSize: '1.2rem', marginBottom: '32px' }}>Drag & drop any <strong style={{ color: '#58a6ff' }}>File</strong> or <strong style={{ color: '#a371f7' }}>Folder</strong></span>
+          
+          <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', width: '100%' }}>
+            <label className="btn" style={{ flex: 1, justifyContent: 'center', padding: '12px 0' }}>
+              <FileIcon size={18} /> Browse File
+              <input type="file" style={{ display: 'none' }} onChange={(e) => { if(e.target.files?.[0]) handleSystemPath(e.target.files[0]); }} />
+            </label>
+            <label className="btn" style={{ flex: 1, justifyContent: 'center', padding: '12px 0' }}>
+              <FolderOpen size={18} /> Browse Folder
+              {/* @ts-expect-error nwdirectory is specific to NW.js */}
+              <input type="file" nwdirectory="true" webkitdirectory="true" style={{ display: 'none' }} onChange={(e) => { if(e.target.files?.[0]) handleSystemPath(e.target.files[0]); }} />
+            </label>
+          </div>
+        </div>
       </div>
     );
   }
