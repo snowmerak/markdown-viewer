@@ -118,7 +118,7 @@ function App() {
   }
 
   return (
-    <div className="app-root" style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+    <div className="app-root" style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
       {/* UI Controls overlay */}
       <div className="ui-overlay">
         <button className="btn" onClick={() => setMarkdown('')}>
@@ -153,9 +153,9 @@ function App() {
         className="transform-wrapper"
         ref={containerRef}
         style={{
-          width: '100vw',
-          height: '100vh',
-          transform: `translateX(-${currentScreen * 100}vw)`,
+          width: '100%',
+          height: '100%',
+          transform: `translateX(-${currentScreen * 100}%)`,
           transition: 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)',
           willChange: 'transform'
         }}

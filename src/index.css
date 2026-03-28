@@ -28,7 +28,7 @@ body {
   height: 100vh;
   padding: 40px;
   /* CSS Multi-Column Pagination Engine */
-  column-width: calc(var(--page-width) - 80px); /* 100vw minus padding */
+  column-width: calc(100% - 80px); /* 100% minus padding */
   column-gap: 80px; /* Gap takes up the padding space when shifting */
   column-fill: auto; /* Fill sequentially */
   
@@ -38,10 +38,10 @@ body {
 
 /* Dual Mode */
 .viewer-container.dual {
-  /* Set width to half the screen, so 2 columns fit in 100vw */
-  column-width: calc(50vw - 60px); 
-  column-gap: 40px;
-  padding: 40px 40px;
+  /* Distance between every 2 columns MUST equal 100% to prevent drift (-100% shifts) */
+  column-width: calc(50% - 80px); 
+  column-gap: 80px;
+  padding: 40px;
 }
 
 /* Markdown Content Styling & Breaks */
