@@ -9,7 +9,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "nw": "nw --arch=x64 ."
+    "nw": "nw --arch=x64 .",
+    "dist": "node scripts/dist.js"
   },
   "dependencies": {
     "dompurify": "^3.2.4",
@@ -32,6 +33,7 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "nw": "^0.110.0",
+    "nw-builder": "^4.17.5",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1"
