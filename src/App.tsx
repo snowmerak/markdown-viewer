@@ -87,7 +87,7 @@ function App() {
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
-    if (file && file.name.endsWith('.md')) {
+    if (file && file.name.toLowerCase().endsWith('.md')) {
       handleFile(file);
     } else {
       alert("Please drop a valid .md file.");
@@ -109,7 +109,7 @@ function App() {
           <span style={{ fontSize: '1.2rem' }}>Drag & drop a <strong style={{ color: '#58a6ff' }}>.md</strong> file or click to browse</span>
           <input 
             type="file" 
-            accept=".md" 
+            accept=".md,.MD" 
             onChange={(e) => handleFile(e.target.files?.[0] || null)} 
           />
         </label>
