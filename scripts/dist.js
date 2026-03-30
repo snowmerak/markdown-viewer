@@ -14,11 +14,14 @@ const minPackageJson = {
   name: "markdown-viewer",
   main: "index.html",
   version: "1.0.0",
+  author: "Antigravity",
+  description: "Antigravity Reader for Markdown",
   window: {
     title: "Antigravity Reader",
     width: 1280,
     height: 800,
-    position: "center"
+    position: "center",
+    icon: ""
   }
 };
 fs.writeFileSync(path.join(distPath, 'package.json'), JSON.stringify(minPackageJson, null, 2));
@@ -28,7 +31,12 @@ console.log('Packaging NW.js Executable...');
 try {
   // Use npx nwbuild to build targeting the dist folder
   // Mode build, Target Windows 64-bit
-  execSync('npx nwbuild --mode build --version 0.110.0 --flavor normal --outDir ../release ./', { 
+  // We touch a dummy icon to avoid validation error
+  fs.writeFileSync(path.join(distPath, 'icon.ico'), '');
+  minPackageJson.window.icon = 'icon.ico';
+  fs.writeFileSync(path.join(distPath, 'package.json'), JSON.stringify(minPackageJson, null, 2));
+
+  execSync('npx nwbuild --mode build --version 0.110.0 --flavor normal --glob false --outDir ../release .', { 
     cwd: distPath, 
     stdio: 'inherit' 
   });
